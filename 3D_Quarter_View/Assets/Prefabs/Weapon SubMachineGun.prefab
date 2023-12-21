@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 232283938246388582}
   m_Layer: 0
   m_Name: Weapon SubMachineGun
-  m_TagString: Untagged
+  m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50,7 +50,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  value: 0
+  value: 2
 --- !u!135 &140117377280928607
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -72,7 +72,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 236909111088992781}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 5
