@@ -624,6 +624,7 @@ MonoBehaviour:
   - {fileID: 1964769391}
   - {fileID: 2104395514}
   hasGrenades: 0
+  grenadeObj: {fileID: 7036091515804931106, guid: b04ebdd6642b044d1b493d36bc20d004, type: 3}
   followCamera: {fileID: 963194227}
   ammo: 100
   coin: 0

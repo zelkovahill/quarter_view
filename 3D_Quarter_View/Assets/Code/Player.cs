@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     public bool[] hasWeapons;
     public GameObject[] grenades;
     public int hasGrenades;
+    public GameObject grenadeObj;
     public Camera followCamera;
 
     public int ammo;
@@ -31,6 +32,7 @@ public class Player : MonoBehaviour
     private bool wDown;
     private bool jDown;
     private bool fDown;
+    private bool gDown;
     private bool rDown;
     private bool iDown;
     private bool sDown1;
@@ -70,6 +72,7 @@ public class Player : MonoBehaviour
        Move();
        Turn();
        Jump();
+       Grenade();
        Attack();
        Reload();
        Dodge();
@@ -101,6 +104,7 @@ public class Player : MonoBehaviour
        wDown = Input.GetButton("Walk");
        jDown = Input.GetButtonDown("Jump");
        fDown = Input.GetButton("Fire1");
+       gDown = Input.GetButtonDown("Fire2");
        rDown = Input.GetButtonDown("Reload");
        iDown = Input.GetButtonDown("Interation");
        sDown1 = Input.GetButtonDown("Swap1");
@@ -159,6 +163,31 @@ public class Player : MonoBehaviour
            isJump = true;
            anim.SetBool("isJump",true);
            anim.SetTrigger("doJump");
+       }
+   }
+
+   private void Grenade()
+   {
+       if(hasGrenades==0)
+           return;
+
+       if (gDown && isReload != true && isSwap != true)
+       {
+           Ray ray = followCamera.ScreenPointToRay(Input.mousePosition);
+           RaycastHit rayHit;
+           if (Physics.Raycast(ray, out rayHit, 100))
+           {
+               Vector3 nextVec = rayHit.point -transform.position;
+               nextVec.y = 10;
+               
+                GameObject instantGrenade = Instantiate(grenadeObj,transform.position,transform.rotation);
+                Rigidbody rbGrenade = instantGrenade.GetComponent<Rigidbody>();
+                rbGrenade.AddForce(nextVec,ForceMode.Impulse);
+                rbGrenade.AddTorque(Vector3.back * 10 , ForceMode.Impulse);
+
+                hasGrenades--;
+                grenades[hasGrenades].SetActive(false);
+           }
        }
    }
 
