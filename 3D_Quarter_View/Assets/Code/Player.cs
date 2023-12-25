@@ -43,6 +43,7 @@ public class Player : MonoBehaviour
     private bool isSwap;
     private bool isReload;
     private bool isFireReady=true;
+    private bool isBorder;
     
 
     private Vector3 moveVec;
@@ -75,8 +76,25 @@ public class Player : MonoBehaviour
        Interation();
        Swap();
     }
+
+    private void FixedUpdate()
+    {
+        FreezeRotation();
+        StopToWall();
+    }
     
-   private void GetInput()
+    void FreezeRotation()
+    {
+        rb.angularVelocity = Vector3.zero;
+    }
+
+    void StopToWall()
+    {
+        Debug.DrawRay(transform.position, transform.forward * 5, Color.green);
+        isBorder = Physics.Raycast(transform.position,transform.forward,5,LayerMask.GetMask("Wall"));
+    }
+
+    private void GetInput()
    {
        hAxis = Input.GetAxisRaw("Horizontal");
        vAxis = Input.GetAxisRaw("Vertical");
@@ -103,8 +121,12 @@ public class Player : MonoBehaviour
        {
            moveVec = Vector3.zero;
        }
-       
-       transform.position += moveVec * speed * (wDown ? 0.3f : 1f) * Time.deltaTime;
+
+       if (isBorder != true)
+       {
+           transform.position += moveVec * speed * (wDown ? 0.3f : 1f) * Time.deltaTime;
+       }
+
        anim.SetBool("isRun",moveVec != Vector3.zero);
        anim.SetBool("isWalk",wDown);
    }
