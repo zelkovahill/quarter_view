@@ -10,33 +10,36 @@ public class Enemy : MonoBehaviour
    {
       A,
       B,
-      C
-   };
+      C,
+      D
+   }
    public Type enemyType;
    public int maxHealth;
    public int currentHealth;
-   public Transform Target;
+   public Transform target;
    public BoxCollider meleeArea;
    public GameObject bullet;
    public bool isChase;
    public bool isAttack;
+   public bool isDead;
    
-   private Rigidbody rb;
-   BoxCollider boxCollider;
-   Material material;
-   NavMeshAgent nav;
-   private Animator anim;
+   public Rigidbody rb;
+   public BoxCollider boxCollider;
+   public MeshRenderer[] material;
+   public NavMeshAgent nav;
+   public Animator anim;
    
    
  private void Awake()
    {
       rb = GetComponent<Rigidbody>();
       boxCollider = GetComponent<BoxCollider>();
-      material = GetComponentInChildren<MeshRenderer>().material;
+      material = GetComponentsInChildren<MeshRenderer>();
       nav = GetComponent<NavMeshAgent>();
       anim = GetComponentInChildren<Animator>();
       
-      Invoke(nameof(ChaseStart),2f);
+      if(enemyType!=Type.D)
+         Invoke(nameof(ChaseStart),2f);
    }
  
  void ChaseStart()
@@ -47,42 +50,47 @@ public class Enemy : MonoBehaviour
  
    private void Update()
    {
-      if (nav.enabled)
+      if (enemyType!=Type.D && nav.enabled)
       {
-         nav.SetDestination(Target.position);
+         nav.SetDestination(target.position);
          nav.isStopped =!isChase;
       }
    }
 
    private void Targerting()
    {
-      float targetRadius = 0f;
-      float targetRange = 0f;
+      if (!isDead && enemyType != Type.D)
+      {
+         float targetRadius = 0f;
+         float targetRange = 0f;
 
-      switch (enemyType)
-      {
-         case Type.A:
-            targetRadius = 1.5f;
-            targetRange = 3f;
-            break;
-         
-         case Type.B:
-            targetRadius = 1.5f;
-            targetRange = 3f;
-            break;
-         
-         case Type.C:
-            targetRadius = 0.5f;
-            targetRange = 25f;
-            break;
+         switch (enemyType)
+         {
+            case Type.A:
+               targetRadius = 1.5f;
+               targetRange = 3f;
+               break;
+
+            case Type.B:
+               targetRadius = 1.5f;
+               targetRange = 3f;
+               break;
+
+            case Type.C:
+               targetRadius = 0.5f;
+               targetRange = 25f;
+               break;
+         }
+
+         RaycastHit[] rayHits = Physics.SphereCastAll(transform.position, targetRadius, transform.forward, targetRange,
+            LayerMask.GetMask("Player"));
+
+         if (rayHits.Length > 0 && !isAttack)
+         {
+            StartCoroutine(Attack());
+         }
       }
-      
-      RaycastHit[] rayHits = Physics.SphereCastAll(transform.position,targetRadius,transform.forward,targetRange,LayerMask.GetMask("Player"));
-      
-      if (rayHits.Length > 0 && !isAttack)
-      {
-         StartCoroutine(Attack());
-      }
+
    }
 
    IEnumerator Attack()
@@ -182,18 +190,31 @@ public class Enemy : MonoBehaviour
 
    IEnumerator OnDamage(Vector3 reactVec,bool isGrenade)
    {
-      material.color = Color.red;
+      foreach (MeshRenderer mesh in material)
+      {
+         mesh.material.color = Color.red;
+      }
+     
       yield return new WaitForSeconds(0.1f);
 
       if (currentHealth > 0)
       {
-         material.color = Color.white;
+         foreach (MeshRenderer mesh in material)
+         {
+            mesh.material.color = Color.white;
+         }
+         
       }
 
       else
       {
-         material.color = Color.gray;
+         foreach (MeshRenderer mesh in material)
+         {
+            mesh.material.color = Color.gray;
+         }
+         
          gameObject.layer = 14;
+         isDead=true;
          isChase=false;
          nav.enabled=false;
          anim.SetTrigger("doDie");
@@ -212,9 +233,9 @@ public class Enemy : MonoBehaviour
             reactVec = reactVec.normalized;
             reactVec+= Vector3.up;
             rb.AddForce(reactVec*5,ForceMode.Impulse);
-         }
-        
-         Destroy(gameObject,4);
+         } 
+         if(enemyType!=Type.D)
+            Destroy(gameObject,4);
       }
       
    }
