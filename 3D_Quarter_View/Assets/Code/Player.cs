@@ -46,6 +46,7 @@ public class Player : MonoBehaviour
     private bool isReload;
     private bool isFireReady=true;
     private bool isBorder;
+    private bool isDamage;
     
 
     private Vector3 moveVec;
@@ -53,6 +54,7 @@ public class Player : MonoBehaviour
 
     private Rigidbody rb;
     private Animator anim;
+    MeshRenderer[] meshs;
 
     private GameObject nearObject;
     private Weapon equipWeapon;
@@ -63,6 +65,7 @@ public class Player : MonoBehaviour
     {
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody>();
+        meshs= GetComponentsInChildren<MeshRenderer>();
     }
 
 
@@ -358,6 +361,38 @@ public class Player : MonoBehaviour
            }
            Destroy(other.gameObject);
        }
+       
+       else if (other.CompareTag("EnemyBullet"))
+       {
+           if (!isDamage)
+           {
+               Bullet enemyBullet = other.GetComponent<Bullet>();
+               health -= enemyBullet.damage;
+               
+               if(other.GetComponent<Rigidbody>()!=null)
+                   Destroy(other.gameObject);
+               
+               StartCoroutine(OnDanage());
+           }
+       }
+       
+   }
+
+   IEnumerator OnDanage()
+   {
+       isDamage= true;
+       foreach(MeshRenderer mesh in meshs)
+       {
+           mesh.material.color = Color.yellow;
+       }
+       
+       yield return new WaitForSeconds(1f);
+       isDamage = false;
+       foreach(MeshRenderer mesh in meshs)
+       {
+           mesh.material.color = Color.white;
+       }
+
    }
 
    private void OnTriggerStay(Collider other)
