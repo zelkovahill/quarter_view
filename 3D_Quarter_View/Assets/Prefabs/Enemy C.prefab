@@ -94,11 +94,22 @@ MonoBehaviour:
   enemyType: 2
   maxHealth: 200
   currentHealth: 200
-  Target: {fileID: 0}
+  score: 500
+  target: {fileID: 0}
   meleeArea: {fileID: 0}
   bullet: {fileID: 4117348529868599608, guid: 7bee878dd730841afb68f3cce7ba4d89, type: 3}
+  coins:
+  - {fileID: 152323677273614669, guid: 5843cbb4470a242c3b1e2f53d1d864ca, type: 3}
+  - {fileID: 1554681812659186339, guid: 2a8387bf6e06d4b19b8b4b536ea57b58, type: 3}
+  - {fileID: 5912207760877727580, guid: c03c8628e38af4683bfc82f02c171fab, type: 3}
   isChase: 0
   isAttack: 0
+  isDead: 0
+  rb: {fileID: 0}
+  boxCollider: {fileID: 0}
+  material: []
+  nav: {fileID: 0}
+  anim: {fileID: 0}
 --- !u!195 &5965927589893276390
 NavMeshAgent:
   m_ObjectHideFlags: 0

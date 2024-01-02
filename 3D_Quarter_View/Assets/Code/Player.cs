@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     public int hasGrenades;
     public GameObject grenadeObj;
     public Camera followCamera;
+    public GameManager manager;
 
     public int ammo;
     public int coin;
@@ -50,6 +51,7 @@ public class Player : MonoBehaviour
     private bool isBorder;
     private bool isDamage;
     private bool isShop;
+    private bool isDead;
     
 
     private Vector3 moveVec;
@@ -129,7 +131,7 @@ public class Player : MonoBehaviour
            moveVec = DodgeVec;
        }
 
-       if (isSwap || isFireReady!=true || isReload)
+       if (isSwap || isFireReady!=true || isReload || isDead)
        {
            moveVec = Vector3.zero;
        }
@@ -149,7 +151,7 @@ public class Player : MonoBehaviour
        transform.LookAt(transform.position + moveVec);
        
        //#2. 마우스에 의한 회전
-       if(fDown)
+       if(fDown && !isDead)
        {
            Ray ray = followCamera.ScreenPointToRay(Input.mousePosition);
            RaycastHit rayHit;
@@ -165,7 +167,7 @@ public class Player : MonoBehaviour
 
    private void Jump()
    {
-       if (jDown && moveVec == Vector3.zero && isJump != true && isDodge != true && isSwap != true) 
+       if (jDown && moveVec == Vector3.zero && isJump != true && isDodge != true && isSwap != true && !isDead) 
        {
            rb.AddForce(Vector3.up * 15, ForceMode.Impulse);
            isJump = true;
@@ -209,7 +211,7 @@ public class Player : MonoBehaviour
        fireDelay += Time.deltaTime;
        isFireReady = equipWeapon.rate < fireDelay;
 
-       if (fDown && isFireReady && isDodge != true && isSwap != true&&!isShop) 
+       if (fDown && isFireReady && isDodge != true && isSwap != true && !isShop && !isDead)  
        {
            equipWeapon.Use();
            anim.SetTrigger(equipWeapon.type == Weapon.Type.Melee ? "doSwing" : "doShot");
@@ -227,8 +229,8 @@ public class Player : MonoBehaviour
        
        if(ammo == 0)
            return;
-       
-       if(rDown && isJump!=true && isDodge != true && isSwap != true && isFireReady&&!isShop)
+
+       if (rDown && isJump != true && isDodge != true && isSwap != true && isFireReady && !isShop && !isDead) 
        {
            anim.SetTrigger("doReload");
            isReload = true;
@@ -246,7 +248,8 @@ public class Player : MonoBehaviour
    
    private void Dodge()
    {
-       if (jDown && moveVec != Vector3.zero && isJump != true && isDodge != true && isSwap != true &&!isShop) 
+       if (jDown && moveVec != Vector3.zero && isJump != true && isDodge != true && isSwap != true && !isShop &&
+           !isDead) 
        {
            DodgeVec = moveVec;
            speed *= 2;
@@ -283,8 +286,8 @@ public class Player : MonoBehaviour
        if (sDown1) weaponIndex = 0;
        if (sDown2) weaponIndex = 1;
        if (sDown3) weaponIndex = 2;
-       
-       if ((sDown1 || sDown2 || sDown3) && isJump != true && isDodge != true&&!isShop)
+
+       if ((sDown1 || sDown2 || sDown3) && isJump != true && isDodge != true && !isShop && !isDead) 
        {
            if (equipWeapon != null)
            {
@@ -310,7 +313,7 @@ public class Player : MonoBehaviour
 
    private void Interation()
    {
-       if (iDown && nearObject != null && isJump != true && isDodge != true&&!isShop)
+       if (iDown && nearObject != null && isJump != true && isDodge != true && !isShop && !isDead) 
        {
            if (nearObject.tag == "Weapon")
            {
@@ -410,8 +413,14 @@ public class Player : MonoBehaviour
            rb.AddForce(transform.forward * -25,ForceMode.Impulse);
        }
        
+       if (health <= 0 && !isDead)
+       {
+           OnDie();
+       }
+       
        yield return new WaitForSeconds(1f);
        isDamage = false;
+       
        foreach(MeshRenderer mesh in meshs)
        {
            mesh.material.color = Color.white;
@@ -422,6 +431,15 @@ public class Player : MonoBehaviour
            rb.velocity = Vector3.zero;
        }
 
+       
+
+   }
+
+   void OnDie()
+   {
+       anim.SetTrigger("doDie");
+       isDead = true;
+       manager.GameOver();
    }
 
    private void OnTriggerStay(Collider other)

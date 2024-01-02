@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour
 {
@@ -16,9 +17,14 @@ public class Enemy : MonoBehaviour
    public Type enemyType;
    public int maxHealth;
    public int currentHealth;
+   public int score;
+
+   public GameManager manager;
    public Transform target;
    public BoxCollider meleeArea;
    public GameObject bullet;
+   public GameObject[] coins;
+   
    public bool isChase;
    public bool isAttack;
    public bool isDead;
@@ -218,6 +224,31 @@ public class Enemy : MonoBehaviour
          isChase=false;
          nav.enabled=false;
          anim.SetTrigger("doDie");
+         Player player = target.GetComponent<Player>();
+         player.score += score;
+         int ranCoin = Random.Range(0, 3);
+         Instantiate(coins[ranCoin],transform.position + Vector3.up, Quaternion.identity);
+
+         switch (enemyType)
+         {
+            case Type.A:
+               manager.enemyCntA--;
+               break;
+            
+            case Type.B:
+               manager.enemyCntB--;
+               break;
+            
+            case Type.C:
+               manager.enemyCntC--;
+               break;
+            
+            case Type.D:
+               manager.enemyCntD--;
+               break;
+         }
+        
+         
 
          if (isGrenade)
          {
@@ -234,8 +265,8 @@ public class Enemy : MonoBehaviour
             reactVec+= Vector3.up;
             rb.AddForce(reactVec*5,ForceMode.Impulse);
          } 
-         if(enemyType!=Type.D)
-            Destroy(gameObject,4);
+       
+         Destroy(gameObject,4);
       }
       
    }

@@ -60,6 +60,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 10
   isMelee: 1
+  isRock: 0
 --- !u!1 &8391413736149570565
 GameObject:
   m_ObjectHideFlags: 0
@@ -155,11 +156,22 @@ MonoBehaviour:
   enemyType: 0
   maxHealth: 60
   currentHealth: 60
-  Target: {fileID: 0}
+  score: 100
+  target: {fileID: 0}
   meleeArea: {fileID: 8141088526746078578}
   bullet: {fileID: 0}
+  coins:
+  - {fileID: 1554681812659186339, guid: 2a8387bf6e06d4b19b8b4b536ea57b58, type: 3}
+  - {fileID: 152323677273614669, guid: 5843cbb4470a242c3b1e2f53d1d864ca, type: 3}
+  - {fileID: 5912207760877727580, guid: c03c8628e38af4683bfc82f02c171fab, type: 3}
   isChase: 0
   isAttack: 0
+  isDead: 0
+  rb: {fileID: 0}
+  boxCollider: {fileID: 0}
+  material: []
+  nav: {fileID: 0}
+  anim: {fileID: 0}
 --- !u!195 &8141088527702676492
 NavMeshAgent:
   m_ObjectHideFlags: 0
