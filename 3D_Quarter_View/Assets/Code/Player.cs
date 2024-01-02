@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 
 public class Player : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class Player : MonoBehaviour
     public int ammo;
     public int coin;
     public int health;
+    public int score;
   
     
     public int maxAmmo;
@@ -58,7 +60,7 @@ public class Player : MonoBehaviour
     MeshRenderer[] meshs;
 
     private GameObject nearObject;
-    private Weapon equipWeapon;
+    public Weapon equipWeapon;
     private int equipWeaponIndex = -1;
     private float fireDelay;
 
@@ -67,6 +69,8 @@ public class Player : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody>();
         meshs= GetComponentsInChildren<MeshRenderer>();
+        // PlayerPrefs.SetInt("MaxScore",112500);
+        print(PlayerPrefs.GetInt("MaxScore"));
     }
 
 
