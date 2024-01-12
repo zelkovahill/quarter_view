@@ -1,4 +1,3 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -54,7 +53,7 @@ public class GameManager : MonoBehaviour
         enemyList = new List<int>();
         maxScoreText.text = string.Format("{0:n0}", PlayerPrefs.GetInt("MaxScore"));
         
-        if(PlayerPrefs.HasKey("MaxScroe"))
+        if(PlayerPrefs.HasKey("MaxScore"))
             PlayerPrefs.SetInt("MaxScore", 0);
     }
 
